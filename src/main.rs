@@ -2,11 +2,11 @@
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!"
+    "Welcome to time web. An API to calculate time values."
 }
 
 #[get("/from/<hours>/<minutes>/to/<hours2>/<minutes2>")]
-fn time(hours: f64, minutes: f64, hours2: f64, minutes2: f64) -> String {
+fn from_to(hours: f64, minutes: f64, hours2: f64, minutes2: f64) -> String {
     // convert from hours:minutes to all minutes
     let from_minutes: f64 = (hours*60_f64)+minutes;
     let to_minutes: f64 = (hours2*60_f64)+minutes2;
@@ -20,9 +20,16 @@ fn time(hours: f64, minutes: f64, hours2: f64, minutes2: f64) -> String {
     return format!("{}:{} hrs", &time_diff_hrs, &time_diff_mins.round());
 }
 
+#[get("/minutes/<hours>/<minutes>")]
+fn in_minutes(hours: f64, minutes: f64) -> String {
+    let time_minutes: f64 = (hours*60_f64)+minutes;
+
+    return format!("{} mins", time_minutes);
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
-        .mount("/time", routes![time])
+        .mount("/time", routes![from_to, in_minutes])
 }
